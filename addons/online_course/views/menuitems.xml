@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_online_course" name="Online Courses"
+        action="action_course_list" groups="base.group_user" />
+</odoo>

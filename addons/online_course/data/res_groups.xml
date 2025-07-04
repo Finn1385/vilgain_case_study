@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_course_teacher" model="res.groups">
+        <field name="name">Teacher</field>
+        <field name="category_id" ref="online_course.module_category_online_course" />
+    </record>
+</odoo>

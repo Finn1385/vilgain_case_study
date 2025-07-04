@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form -->
+    <record id="view_course_form" model="ir.ui.view">
+        <field name="name">course.form</field>
+        <field name="model">online_course.course</field>
+        <field name="arch" type="xml">
+            <form string="Course">
+                <header>
+                    <!-- Publish -->
+                    <button
+                        name="action_publish"
+                        class="btn-primary"
+                        string="Publish"
+                        type="object"
+                        help="Publish the course"
+                        invisible="state != 'draft'"
+                        groups="online_course.group_course_teacher"
+                    />
+                    <button
+                        name="action_unpublish"
+                        class="btn-primary"
+                        string="Unpublish"
+                        type="object"
+                        help="Unpublish the course"
+                        invisible="state != 'published'"
+                        groups="online_course.group_course_teacher"
+                    />
+
+                    <!-- Enrollment -->
+                    <button
+                        name="action_enroll"
+                        class="btn-primary"
+                        string="Enroll"
+                        type="object"
+                        invisible="not can_enroll"
+                    />
+                    <button
+                        name="action_unenroll"
+                        class="btn-primary"
+                        string="Unenroll"
+                        type="object"
+                        invisible="not is_enrolled"
+                    />
+
+                    <!-- Archive -->
+                    <button
+                        name="action_archive"
+                        class="btn-secondary"
+                        string="Archive"
+                        type="object"
+                        help="Archive the course"
+                        invisible="state not in ('draft', 'published')"
+                        groups="online_course.group_course_teacher"
+                    />
+                    <button
+                        name="action_unarchive"
+                        class="btn-secondary"
+                        string="Unarchive"
+                        type="object"
+                        help="Unarchive the course"
+                        invisible="state != 'archived'"
+                        groups="online_course.group_course_teacher"
+                    />
+
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <label for="name" string="Course Name" />
+                            <field name="name" placeholder="Course Name" />
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="teacher_id"
+                            placeholder="Select a teacher..."
+                            options="{'no_create': True}" />
+                        <label for="price" />
+                        <div class="o_row">
+                            <field name="currency_id" invisible="1" />
+                            <field name="price" widget="monetary" />
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="Course Details">
+                            <group string="Description">
+                                <field name="description" placeholder="Course description..."
+                                    nolabel="1" />
+                            </group>
+                        </page>
+                        <page string="Enrollments" groups="online_course.group_course_teacher">
+                            <group string="Enrolles Students">
+                                <field name="enrollment_ids" nolabel="1">
+                                    <list create="false" delete="true">
+                                        <field name="student_id" />
+                                        <field name="status" widget="badge" />
+                                        <field name="enrollment_date" />
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List -->
+    <record id="view_course_list" model="ir.ui.view">
+        <field name="name">course.list</field>
+        <field name="model">online_course.course</field>
+        <field name="arch" type="xml">
+            <list string="Courses">
+                <field name="name" />
+                <field name="teacher_id" />
+                <field name="currency_id" column_invisible="1" />
+                <field name="price" widget="monetary" />
+                <field name="state" widget="badge" />
+                <button
+                    name="action_enroll"
+                    string="Enroll Now"
+                    type="object"
+                    class="btn btn-primary"
+                    invisible="not can_enroll"
+                />
+                <button
+                    name="action_unenroll"
+                    class="btn-primary"
+                    string="Unenroll"
+                    type="object"
+                    invisible="not is_enrolled"
+                />
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban -->
+    <record id="view_course_kanban" model="ir.ui.view">
+        <field name="name">course.kanban</field>
+        <field name="model">online_course.course</field>
+        <field name="arch" type="xml">
+            <kanban class="oe_kanban_full" quick_create="false">
+                <field name="state" />
+                <field name="name" />
+                <field name="teacher_id" />
+                <field name="description" />
+                <field name="currency_id" />
+                <field name="price" />
+                <field name="can_enroll" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card position-relative p-2"
+                            t-att-class="{
+                                'bg-light-light': record.state.raw_value == 'draft',
+                                'bg-success-subtle': record.state.raw_value == 'published',
+                                'bg-warning-subtle': record.state.raw_value == 'archived',
+                            }"
+                        >
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <field name="state" widget="badge" class="fs-4"
+                                    decoration-secondary="state == 'draft'"
+                                    decoration-success="state == 'published'"
+                                    decoration-warning="state == 'archived'" />
+                            </div>
+                            <div>
+                                <field name="name" class="fw-bolder fs-4 d-block" />
+                            </div>
+                            <div class="d-flex flex-column">
+                                <field name="teacher_id" />
+                                <field name="description" class="text-muted my-2" />
+                            </div>
+
+                            <footer
+                                class="border-top pt-2 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <field name="currency_id" invisible="1" />
+                                    <field name="price" widget="monetary"
+                                        class="fw-bold text-success fs-4" invisible="price == 0" />
+                                    <span class="fw-bold text-success fs-4" invisible="price != 0">
+                                        Free</span>
+                                </div>
+
+                                <button name="action_enroll" type="object"
+                                    class="btn btn-primary"
+                                    invisible="not can_enroll"
+                                >
+                                    Enroll Now
+                                </button>
+                                <button name="action_unenroll" type="object"
+                                    class="btn btn-secondary"
+                                    invisible="not is_enrolled"
+                                >
+                                    Unenroll
+                                </button>
+                            </footer>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_course_search" model="ir.ui.view">
+        <field name="name">course.search</field>
+        <field name="model">online_course.course</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="teacher_id" />
+                <field name="state" />
+
+                <filter
+                    name="archived"
+                    string="Archived"
+                    domain="[('state', '=', 'archived')]"
+                    groups="online_course.group_course_teacher"
+                />
+                <filter
+                    name="my_courses"
+                    string="My Courses"
+                    domain="[('teacher_id', '=', uid)]"
+                    groups="online_course.group_course_teacher"
+                />
+            </search>
+        </field>
+    </record>
+</odoo>

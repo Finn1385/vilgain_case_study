@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_course_list" model="ir.actions.act_window">
+        <field name="name">Courses</field>
+        <field name="res_model">online_course.course</field>
+        <field name="view_mode">list,kanban,form</field>
+    </record>
+</odoo>
