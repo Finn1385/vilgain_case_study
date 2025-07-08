@@ -7,7 +7,7 @@ This document outlines the necessary steps for installing and configuring the en
 ### 1. Initialize the project
 
 1. Create a new folder for the project and navigate to it
-2. Clone Odoo repository `18.0` branch: `git@github.com:odoo/odoo.git`
+2. Clone Odoo repository (branch `18.0`: `git@github.com:odoo/odoo.git`
 3. Check out Odoo to the `f91684d8178a41df321e781a81e6fce9df112346` commit.
 4. Clone the project repository into the folder: `git@github.com:Finn1385/vilgain_case_study.git`
 5. Create virtual environment for the project
@@ -16,7 +16,7 @@ This document outlines the necessary steps for installing and configuring the en
 mkdir odoo
 cd odoo
 git clone --branch 18.0 --single-branch git@github.com:odoo/odoo.git .
-git checkout -f 18.0 f91684d8178a41df321e781a81e6fce9df112346
+git checkout f91684d8178a41df321e781a81e6fce9df112346
 git clone git@github.com:Finn1385/vilgain_case_study.git --depth 1
 python3 -m venv .venv
 source .venv/bin/activate
